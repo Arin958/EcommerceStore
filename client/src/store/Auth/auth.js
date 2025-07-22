@@ -183,7 +183,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.user = action.payload;
-        localStorage.removeItem("guestId");
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

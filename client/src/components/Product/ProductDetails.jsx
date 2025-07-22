@@ -31,7 +31,7 @@ const ProductDetails = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
-  const userId = user ? user._id : guestId;
+  const userId = user?._id;
 
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -49,7 +49,9 @@ const ProductDetails = () => {
         productId: product._id,
         size: selectedSize,
         quantity,
-        userId,
+        gender: product.gender, // optional if you support gender-based filtering
+        userId: user?._id,
+        guestId: !user ? guestId : undefined,
       })
     );
 

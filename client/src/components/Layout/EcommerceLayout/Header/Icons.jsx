@@ -16,7 +16,6 @@ const Icons = ({ onSearchClick, onCartClick }) => {
   const { user } = useSelector((state) => state.auth);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const cart = useSelector((state) => state.cart.cart);
-  console.log(cart);
 
   useEffect(() => {
     const shouldFetchCart = user?._id || localStorage.getItem("guestId");

@@ -18,14 +18,11 @@ const getUserIdFromToken = (req) => {
 exports.addToCart = async (req, res) => {
   try {
     const { productId, size, gender, quantity, guestId } = req.body;
-
     const userId = getUserIdFromToken(req);
 
     const product = await Product.findById(productId);
     if (!product) {
-      return res
-        .status(404)
-        .json({ message: "Product not found", success: false });
+      return res.status(404).json({ message: "Product not found", success: false });
     }
 
     if (size && !product.sizes.includes(size)) {
@@ -43,7 +40,7 @@ exports.addToCart = async (req, res) => {
       gender,
       quantity,
       price: product.discountPrice || product.price,
-      image: product.images[0].url,
+      image: product.images[0]?.url || "",
     };
 
     let cart;
@@ -56,11 +53,12 @@ exports.addToCart = async (req, res) => {
 
     if (!cart) {
       cart = new Cart({
-        user: userId,
-        guestId: guestId,
         products: [cartItem],
         totalPrice: cartItem.price * cartItem.quantity,
       });
+
+      if (userId) cart.user = userId;
+      if (guestId) cart.guestId = guestId; // ✅ Ensure guestId is assigned
     } else {
       const existingItem = cart.products.find(
         (item) =>
@@ -71,32 +69,25 @@ exports.addToCart = async (req, res) => {
 
       if (existingItem) {
         existingItem.quantity += quantity;
-        existingItem.price = product.discountPrice || product.price;
-        existingItem.image = product.images[0].url;
       } else {
         cart.products.push(cartItem);
       }
 
       cart.totalPrice = Math.round(
-        cart.products.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0
-        )
+        cart.products.reduce((total, item) => total + item.price * item.quantity, 0)
       );
     }
 
+    console.log("Saving cart for guestId:", cart.guestId);
     await cart.save();
 
-    return res
-      .status(200)
-      .json({ message: "Product added to cart", success: true, cart });
+    res.status(200).json({ message: "Product added to cart", success: true, cart });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ message: "Internal server error", success: false });
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };
+
 
 exports.getCart = async (req, res) => {
   try {
@@ -257,18 +248,16 @@ exports.removeFromCart = async (req, res) => {
 exports.mergeCarts = async (req, res) => {
   try {
     const userId = getUserIdFromToken(req);
-
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized", success: false });
     }
 
     const { guestId } = req.body;
-
     if (!guestId) {
-      return res
-        .status(400)
-        .json({ message: "Guest ID is required", success: false });
+      return res.status(400).json({ message: "Guest ID is required", success: false });
     }
+
+    console.log("🔍 Merging cart for guestId:", guestId);
 
     const [userCart, guestCart] = await Promise.all([
       Cart.findOne({ user: userId }),
@@ -324,7 +313,10 @@ exports.mergeCarts = async (req, res) => {
       )
     );
 
-    await Promise.all([userCart.save(), Cart.findOneAndDelete({ guestId })]);
+    await Promise.all([
+      userCart.save(),
+      Cart.findOneAndDelete({ guestId }), // delete guest cart
+    ]);
 
     res.status(200).json({
       success: true,
@@ -333,8 +325,6 @@ exports.mergeCarts = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ message: "Internal server error", success: false });
+    res.status(500).json({ message: "Internal server error", success: false });
   }
 };

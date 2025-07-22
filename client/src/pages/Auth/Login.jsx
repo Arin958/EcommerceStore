@@ -12,7 +12,7 @@ const LoginPage = () => {
   });
   const dispatch = useDispatch();
   const { guestId, user, loading, error } = useSelector((state) => state.auth);
-  const {cart} = useSelector((state) => state.cart);
+  const { cart } = useSelector((state) => state.cart);
 
   const navigate = useNavigate();
 
@@ -23,29 +23,32 @@ const LoginPage = () => {
     });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const result = await dispatch(loginUser(formData)).unwrap();
-    setFormData({ email: "", password: "" });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await dispatch(loginUser(formData)).unwrap();
+      setFormData({ email: "", password: "" });
+     console.log(result, "result")
+      console.log(guestId, "guestId");
 
-    if (guestId) {
-      try {
-        await dispatch(mergeCarts({ guestId, userId: result.id })).unwrap();
-      } catch (mergeError) {
-        console.error("Cart merge failed:", mergeError);
-        toast.error("Cart merge failed. You may lose saved items.");
+      if (guestId) {
+        try {
+          await dispatch(
+            mergeCarts({ guestId })
+          ).unwrap(); // ✅ Only guestId
+          localStorage.removeItem("guestId");
+        } catch (mergeError) {
+          console.error("Cart merge failed:", mergeError);
+          toast.error("Cart merge failed. You may lose saved items.");
+        }
       }
+
+      toast.success("Login successful");
+      navigate("/");
+    } catch (err) {
+      toast.error(err.message || "Login failed");
     }
-
-    localStorage.removeItem("guestId");
-    toast.success("Login successful");
-    navigate("/");
-  } catch (err) {
-    toast.error(err.message || "Login failed");
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
