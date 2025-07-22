@@ -22,6 +22,7 @@ import CategoryProduct from "../components/Category/CategoryProduct";
 import OrderPage from "../pages/Admin/OrderPage";
 import UserPage from "../pages/Admin/UserPage";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
+import Profile from "../pages/Profile/Profile";
 
 // adjust path accordingly
 
@@ -75,6 +76,7 @@ const Routers = () => {
         <Route path="/orders/:orderId" element={<OrderDetails />} />
         <Route path="/category" element={<Category />} />
         <Route path="/category/:category" element={<CategoryProduct />} />
+        <Route path="/account" element={<Profile />} />
 
         {/* Add other routes that should use the layout here */}
         {/* Example: */}

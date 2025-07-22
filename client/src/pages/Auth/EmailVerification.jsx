@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import { verifyEmail } from "../../store/Auth/auth";
+import { toast } from "react-toastify";
 
 const EmailVerificationCode = () => {
   const dispatch = useDispatch();
@@ -53,6 +54,7 @@ const EmailVerificationCode = () => {
       return;
     }
     dispatch(verifyEmail(verificationCode));
+    toast.success("Email verified successfully");
     navigate("/");
 
   };

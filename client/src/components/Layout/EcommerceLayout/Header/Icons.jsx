@@ -51,14 +51,6 @@ const Icons = ({ onSearchClick, onCartClick }) => {
   return (
     <>
       <div className="flex items-center space-x-4">
-        {/* Search Button */}
-        <button
-          onClick={onSearchClick}
-          className="p-2 text-gray-600 hover:text-indigo-600 transition"
-        >
-          <Search className="h-5 w-5" />
-        </button>
-
         {/* Wishlist Icon */}
         <button
           onClick={onCartClick}
