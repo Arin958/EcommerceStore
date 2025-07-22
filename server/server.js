@@ -33,9 +33,26 @@ app.use(compression({
     return compression.filter(req, res);
   }
 }));
+const allowedOrigins = [
+  process.env.CLIENT_URL || "http://localhost:5173",
+  "https://chatting-app-dusky.vercel.app",
+];
+
+const isOriginAllowed = (origin) => {
+  return (
+    !origin ||
+    allowedOrigins.includes(origin) ||
+    /\.vercel\.app$/.test(origin)
+  );
+};
+
+// CORS for Express
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: function (origin, callback) {
+      if (isOriginAllowed(origin)) callback(null, true);
+      else callback(new Error("Not allowed by CORS: " + origin));
+    },
     credentials: true,
   })
 );

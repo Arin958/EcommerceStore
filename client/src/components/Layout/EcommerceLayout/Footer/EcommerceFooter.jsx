@@ -1,7 +1,8 @@
 import BrandInfo from "./BrandInfo";
 import QuickLinks from "./QuickLinks";
 import CustomerService from "./CustomerService";
-import Newsletter from "./Newsletter";
+import NewsLetter from "./NewsLetter";
+
 
 const Footer = () => (
   <footer className="bg-gray-900 text-white pt-12 pb-8">
@@ -10,7 +11,7 @@ const Footer = () => (
         <BrandInfo />
         <QuickLinks />
         <CustomerService />
-        <Newsletter />
+        <NewsLetter />
       </div>
 
       <div className="border-t border-gray-800 mt-12 pt-6 text-center text-gray-500 text-sm">

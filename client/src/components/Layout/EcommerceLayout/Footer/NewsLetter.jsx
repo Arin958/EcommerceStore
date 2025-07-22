@@ -1,4 +1,4 @@
-const Newsletter = () => (
+const NewsLetter = () => (
   <div>
     <h4 className="text-lg font-semibold mb-4">Newsletter</h4>
     <p className="text-gray-400 mb-4">
@@ -20,4 +20,4 @@ const Newsletter = () => (
   </div>
 );
 
-export default Newsletter;
+export default NewsLetter;
