@@ -16,6 +16,7 @@ const Icons = ({ onSearchClick, onCartClick }) => {
   const { user } = useSelector((state) => state.auth);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const cart = useSelector((state) => state.cart.cart);
+  console.log(cart);
 
   useEffect(() => {
     const shouldFetchCart = user?._id || localStorage.getItem("guestId");
@@ -61,10 +62,14 @@ const Icons = ({ onSearchClick, onCartClick }) => {
         {/* Wishlist Icon */}
         <button
           onClick={onCartClick}
-          className="p-2 text-gray-600 hover:text-indigo-600 transition"
+          className="p-2 text-gray-600 hover:text-indigo-600 transition relative"
         >
           <ShoppingBag className="h-5 w-5" />
-          {}
+          {cart?.products?.length > 0 && (
+            <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-5 w-5 text-xs font-bold leading-none text-white bg-red-500 rounded-full transform translate-x-1/2 -translate-y-1/2">
+              {cart.products.length}
+            </span>
+          )}
         </button>
 
         {/* Conditional Rendering Based on Login */}

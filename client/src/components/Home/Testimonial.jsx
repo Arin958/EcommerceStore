@@ -191,34 +191,6 @@ const Testimonials = () => {
             ))}
           </div>
         </div>
-
-        {/* Trust Badges */}
-        <div className="mt-16 flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-80">
-          <img
-            loading="lazy"
-            src="https://via.placeholder.com/120x40?text=Trust+Pilot+5"
-            alt="TrustPilot"
-            className="h-8"
-          />
-          <img
-            loading="lazy"
-            src="https://via.placeholder.com/120x40?text=Google+Reviews"
-            alt="Google Reviews"
-            className="h-8"
-          />
-          <img
-            loading="lazy"
-            src="https://via.placeholder.com/120x40?text=BBB+A+"
-            alt="BBB"
-            className="h-8"
-          />
-          <img
-            loading="lazy"
-            src="https://via.placeholder.com/120x40?text=100%+Secure"
-            alt="Secure"
-            className="h-8"
-          />
-        </div>
       </div>
     </section>
   );
