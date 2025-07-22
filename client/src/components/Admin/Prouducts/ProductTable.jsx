@@ -43,7 +43,7 @@ const ProductTable = ({
                     <div className="flex-shrink-0 h-10 w-10 rounded-md overflow-hidden bg-gray-100">
                       {product.images?.[0] && (
                         <img 
-                        loadng="lazy"
+                        loading="lazy"
                           src={product.images[0].url} 
                           alt={product.name}
                           className="h-full w-full object-cover"

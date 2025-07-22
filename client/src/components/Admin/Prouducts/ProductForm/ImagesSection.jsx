@@ -28,6 +28,7 @@ const ImagesSection = ({ previewImages, setPreviewImages, handleChange }) => {
             <div key={i} className="relative group">
               <img 
                 src={src} 
+                loading="lazy"
                 alt={`Preview ${i}`} 
                 className="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm" 
               />

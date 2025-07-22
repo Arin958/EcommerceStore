@@ -1,9 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  
   Star as FaStar,
- 
   Crown as FaCrown,
   Heart as FaHeart,
   FireExtinguisher,
@@ -66,22 +64,37 @@ const ProductCard = ({ product, variant = "default" }) => {
 
       <Link to={`/products/${product._id}`} className="block">
         {/* Image container with dynamic height and parallax effect */}
-        <div className="h-100 md:h-100 overflow-hidden relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <img
-              loading="lazy"
-              src={product.images?.[0]?.url}
-              alt={product.name}
-              className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-              style={{
-                objectPosition: "center center",
-              }}
-            />
-          </div>
-          {/* Double gradient overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent opacity-100"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
+     <div className="relative h-60 md:h-64 overflow-hidden">
+  <div className="absolute inset-0 overflow-hidden">
+    <img
+      loading="lazy"
+      src={product.images?.[0]?.url.replace(
+        "/upload/",
+        "/upload/w_400,h_400,c_fill,q_auto,f_auto/"
+      )}
+      srcSet={`
+        ${product.images?.[0]?.url.replace(
+          "/upload/",
+          "/upload/w_200,h_200,c_fill,q_auto,f_auto/"
+        )} 200w,
+        ${product.images?.[0]?.url.replace(
+          "/upload/",
+          "/upload/w_400,h_400,c_fill,q_auto,f_auto/"
+        )} 400w
+      `}
+      sizes="(max-width: 768px) 200px, 400px"
+      alt={product.name}
+      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+      style={{
+        objectPosition: "center center",
+      }}
+    />
+  </div>
+
+  {/* Gradient overlays */}
+  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent opacity-100"></div>
+  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+</div>
 
         {/* Product info with slide-up effect */}
         <div className="p-5 transition-transform duration-500 group-hover:-translate-y-2">
