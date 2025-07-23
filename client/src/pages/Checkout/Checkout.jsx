@@ -14,7 +14,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.cart);
-  console.log(cart);
+
   const { user } = useSelector((state) => state.auth);
   const { checkout } = useSelector((state) => state.checkout);
 
@@ -81,12 +81,12 @@ const Checkout = () => {
       paypalDetails: details,
     };
 
-    console.log("📦 Sending order data:", orderData);
+   
 
     try {
       // First create and capture the PayPal order
       const result = await dispatch(capturePayPalOrder(orderData)).unwrap();
-      console.log(result, "result");
+      
 
       // The response should contain the checkout ID
       if (result?.checkout?._id) {

@@ -250,7 +250,6 @@ const productUserSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchCategory.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.loading = false;
         state.category = action.payload ? action.payload : [];
       })

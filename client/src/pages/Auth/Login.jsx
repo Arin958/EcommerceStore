@@ -28,8 +28,7 @@ const LoginPage = () => {
     try {
       const result = await dispatch(loginUser(formData)).unwrap();
       setFormData({ email: "", password: "" });
-     console.log(result, "result")
-      console.log(guestId, "guestId");
+ 
 
       if (guestId) {
         try {

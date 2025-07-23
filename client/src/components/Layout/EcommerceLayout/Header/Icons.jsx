@@ -109,7 +109,7 @@ const Icons = ({ onSearchClick, onCartClick }) => {
               Login
             </Link>
             <Link
-              to="/signup"
+              to="/register"
               className="p-2 text-gray-600 hover:text-indigo-600 transition text-sm font-medium"
             >
               Sign Up

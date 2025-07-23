@@ -71,7 +71,7 @@ const AdminProductPage = () => {
   // Virtualized row renderer with image support
   const Row = useCallback(({ index, style }) => {
     const product = currentProducts[index];
-    console.log(product);
+   
     
     return (
       <div 

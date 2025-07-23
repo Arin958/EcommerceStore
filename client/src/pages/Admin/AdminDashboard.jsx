@@ -7,7 +7,7 @@ import { Users as FiUsers, ShoppingCart as FiShoppingCart, DollarSign as FiDolla
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { adminDashboardData } = useSelector((state) => state.adminDashboard);
-  console.log(adminDashboardData);
+  
 
   useEffect(() => {
     dispatch(fetchAdminDashboardData());
