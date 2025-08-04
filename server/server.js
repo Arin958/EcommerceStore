@@ -15,6 +15,7 @@ const orderRoutes = require("./routes/Order/orderRoutes");
 const orderAdminRoutes = require("./routes/Order/orderAdminRoute");
 const userAdminRouter = require("./routes/UserAdminRoute/getAllUser");
 const adminDashboard = require("./routes/Admin/adminDashBoard");
+const notificationRoutes = require("./routes/Notification/Notification");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,16 +24,16 @@ const PORT = process.env.PORT || 5000;
 require("./cronjobs/finalizeStaleCheckouts");
 connectDb();
 
-
-
-app.use(compression({
-  level: 6,            // Compression level (1-11)
-  threshold: 0,        // Minimum response size to compress
-  filter: (req, res) => {
-    if (req.headers['x-no-compression']) return false;
-    return compression.filter(req, res);
-  }
-}));
+app.use(
+  compression({
+    level: 6, // Compression level (1-11)
+    threshold: 0, // Minimum response size to compress
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) return false;
+      return compression.filter(req, res);
+    },
+  })
+);
 const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:5173",
   "https://chatting-app-dusky.vercel.app",
@@ -40,9 +41,7 @@ const allowedOrigins = [
 
 const isOriginAllowed = (origin) => {
   return (
-    !origin ||
-    allowedOrigins.includes(origin) ||
-    /\.vercel\.app$/.test(origin)
+    !origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)
   );
 };
 
@@ -70,6 +69,7 @@ app.use("/api/order", orderRoutes);
 app.use("/api/orderAdmin", orderAdminRoutes);
 app.use("/api/userAdmin", userAdminRouter);
 app.use("/api/adminDashboard", adminDashboard);
+app.use("/api/notification", notificationRoutes);
 
 // ✅ Start Server
 app.listen(PORT, () =>

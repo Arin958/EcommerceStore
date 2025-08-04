@@ -62,7 +62,7 @@ const OrderPage = () => {
 
   const filteredOrders = orderList.filter(order => {
     const matchesSearch = 
-      order.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order?.user?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.shippingAddress.firstName.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -74,6 +74,8 @@ const OrderPage = () => {
     
     return matchesSearch && matchesStatus;
   });
+
+  console.log(filteredOrders)
 
   const statusOptions = [
     { value: "Processing", label: "Processing" },
@@ -232,12 +234,12 @@ const OrderPage = () => {
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium">
-                            {order.user.name.charAt(0)}
+                            {order?.user?.name.charAt(0)}
                           </div>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{order.user.name}</div>
-                          <div className="text-sm text-gray-500">{order.user.email}</div>
+                          <div className="text-sm font-medium text-gray-900">{order?.user?.name}</div>
+                          <div className="text-sm text-gray-500">{order?.user?.email}</div>
                         </div>
                       </div>
                     </td>

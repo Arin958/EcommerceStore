@@ -1,4 +1,4 @@
-import { Search, Heart, User, ShoppingBag } from "lucide-react";
+import { Search, Heart, User, ShoppingBag, Bell } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -8,14 +8,20 @@ import CartDrawer from "../../../Cart/CartDrawer";
 import { logout } from "../../../../store/Auth/auth";
 
 import { persist } from "../../../../store/store";
+import NotificationSidebar from "../Notification/Notification";
+import { clearNotifications } from "../../../../store/Notification/notifcationSlice";
 // adjust path as needed
 
-const Icons = ({ onSearchClick, onCartClick }) => {
+const Icons = ({ onCartClick, onNotificationClick }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const { notifications, loading, error } = useSelector(
+    (state) => state.notification
+  );
+
   const cart = useSelector((state) => state.cart.cart);
+  const unread = notifications.filter((notification) => !notification.read);
 
   useEffect(() => {
     const shouldFetchCart = user?._id || localStorage.getItem("guestId");
@@ -33,6 +39,7 @@ const Icons = ({ onSearchClick, onCartClick }) => {
 
       // 2. Clear cart from Redux state
       dispatch(clearCart());
+      dispatch(clearNotifications());
 
       // 3. Remove guestId if present
       localStorage.removeItem("guestId");
@@ -116,7 +123,21 @@ const Icons = ({ onSearchClick, onCartClick }) => {
             </Link>
           </>
         )}
+        <button
+          onClick={onNotificationClick}
+          className="p-2 text-gray-600 hover:text-indigo-600 transition relative"
+        >
+          <Bell className="h-5 w-5" />
+
+          {/* Add badge if there are unread notifications */}
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-5 w-5 text-xs font-bold leading-none text-white bg-red-500 rounded-full transform translate-x-1/2 -translate-y-1/2">
+            {unread.length}
+            {/* Replace with actual unread count */}
+          </span>
+        </button>
       </div>
+
+      {/* Notification Sidebar */}
     </>
   );
 };

@@ -10,9 +10,12 @@ const OrderList = () => {
   const navigate = useNavigate();
   const { orders, loading, error } = useSelector((state) => state.order);
 
-  const ordersList = orders?.orders;
+ 
 
+
+  const ordersList = orders?.orders;
   console.log(orders);
+
 
   useEffect(() => {
     dispatch(fetchOrders());
@@ -24,6 +27,8 @@ const OrderList = () => {
     Delivered: "bg-green-100 text-green-800",
     Cancelled: "bg-red-100 text-red-800",
   };
+
+  
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -38,7 +43,7 @@ const OrderList = () => {
         </div>
 
         <div className="space-y-6">
-          {ordersList.map((order) => (
+          {orders?.map((order) => (
             <div
               key={order._id}
               className="bg-white shadow overflow-hidden rounded-lg transition-all hover:shadow-lg"

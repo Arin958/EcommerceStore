@@ -10,7 +10,7 @@ export const fetchOrders = createAsyncThunk(
       const res = await axios.get(`${API}/api/order`, {
         withCredentials: true,
       });
-      return res.data;
+      return res.data.orders;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -24,7 +24,7 @@ export const fetchOrderDetails = createAsyncThunk(
       const res = await axios.get(`${API}/api/order/${orderId}`, {
         withCredentials: true,
       });
-      return res.data;
+      return res.data.order;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -51,6 +51,7 @@ const orderSlice = createSlice({
       state.error = null;
     })
       .addCase(fetchOrders.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.orders = action.payload;
       })
       .addCase(fetchOrders.rejected, (state, action) => {

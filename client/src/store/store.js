@@ -11,6 +11,7 @@ import orderReducer from "./Order/orderSlice";
 import orderAdminReducer from "./Order/orderAdminSlice";
 import userAdminReducer from "./Admin/getAllUser";
 import adminDashboardReducer from "./Admin/adminDashboard";
+import notificationReducer from "./Notification/notifcationSlice";
 const persistConfig = {
   key: "root",
   storage,
@@ -26,7 +27,8 @@ const rootReducer = combineReducers({
   order: orderReducer,
   orderAdmin: orderAdminReducer,
   userAdmin: userAdminReducer,
-  adminDashboard: adminDashboardReducer
+  adminDashboard: adminDashboardReducer,
+  notification: notificationReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

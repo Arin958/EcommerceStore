@@ -1,6 +1,7 @@
 const Order = require("../../model/Order/Order")
 
 exports.getMyOrders = async(req,res) => {
+    console.log(req.user._id)
     try {
         const orders = await Order.find({
             user: req.user._id

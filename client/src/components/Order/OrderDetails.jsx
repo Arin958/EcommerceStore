@@ -12,8 +12,9 @@ import {
 const OrderDetails = () => {
   const { orderId } = useParams();
   const dispatch = useDispatch();
-  const { order } = useSelector((state) => state.order);
-  const orderDetails = order.order;
+  const { order,loading ,error } = useSelector((state) => state.order);
+
+
 
   useEffect(() => {
     dispatch(fetchOrderDetails(orderId));
@@ -70,7 +71,7 @@ const OrderDetails = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Order Summary
             </h3>
-            {orderDetails.orderItems.map((item, index) => (
+            {order.orderItems.map((item, index) => (
               <div key={index} className="flex py-4">
                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                   <img
@@ -99,7 +100,7 @@ const OrderDetails = () => {
             <div className="border-t border-gray-200 pt-4 mt-4">
               <div className="flex justify-between text-base font-medium text-gray-900">
                 <p>Total</p>
-                <p>${orderDetails.totalPrice}</p>
+                <p>${order.totalPrice}</p>
               </div>
             </div>
           </div>
@@ -115,21 +116,21 @@ const OrderDetails = () => {
                   Shipping Address
                 </h4>
                 <p className="mt-1 text-sm text-gray-900">
-                  {orderDetails.shippingAddress.firstName}{" "}
-                  {orderDetails.shippingAddress.lastName}
+                  {order.shippingAddress.firstName}{" "}
+                  {order.shippingAddress.lastName}
                 </p>
                 <p className="text-sm text-gray-900">
-                  {orderDetails.shippingAddress.address}
+                  {order.shippingAddress.address}
                 </p>
                 <p className="text-sm text-gray-900">
-                  {orderDetails.shippingAddress.city},{" "}
-                  {orderDetails.shippingAddress.postalCode}
+                  {order.shippingAddress.city},{" "}
+                  {order.shippingAddress.postalCode}
                 </p>
                 <p className="text-sm text-gray-900">
-                  {orderDetails.shippingAddress.country}
+                  {order.shippingAddress.country}
                 </p>
                 <p className="text-sm text-gray-900">
-                  Phone: {orderDetails.shippingAddress.phoneNumber}
+                  Phone: {order.shippingAddress.phoneNumber}
                 </p>
               </div>
               <div>
@@ -139,16 +140,16 @@ const OrderDetails = () => {
                 <div className="mt-1 flex items-center">
                   <CreditCardIcon className="h-5 w-5 text-gray-400 mr-2" />
                   <span className="text-sm text-gray-900">
-                    {orderDetails.paymentMethod}
+                    {order.paymentMethod}
                   </span>
                 </div>
                 <div className="mt-2 flex items-center">
-                  {orderDetails.isPaid ? (
+                  {order.isPaid ? (
                     <>
                       <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2" />
                       <span className="text-sm text-gray-900">
                         Paid on{" "}
-                        {new Date(orderDetails.paidAt).toLocaleDateString()}
+                        {new Date(order.paidAt).toLocaleDateString()}
                       </span>
                     </>
                   ) : (
@@ -172,9 +173,9 @@ const OrderDetails = () => {
             <div>
               <h4 className="text-sm font-medium text-gray-500">Customer</h4>
               <p className="mt-1 text-sm text-gray-900">
-                {orderDetails.user.name}
+                {order.user.name}
               </p>
-              <p className="text-sm text-gray-900">{orderDetails.user.email}</p>
+              <p className="text-sm text-gray-900">{order.user.email}</p>
             </div>
           </div>
         </div>

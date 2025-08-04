@@ -7,7 +7,7 @@ import SearchBar from "./SearchBar";
 import Icons from "./Icons";
 import { Menu, X } from "lucide-react";
 
-const Header = ({ onSearchToggle, cartDrawerOpen, onCartDrawerToggle }) => {
+const Header = ({ onSearchToggle, cartDrawerOpen, notificationBar, onCartDrawerToggle, onNotificationToggle }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -28,6 +28,7 @@ const Header = ({ onSearchToggle, cartDrawerOpen, onCartDrawerToggle }) => {
           <Icons 
             onSearchClick={() => setSearchOpen(!searchOpen)} 
           onCartClick={onCartDrawerToggle}
+          onNotificationClick={onNotificationToggle}
             searchOpen={searchOpen}
           />
         </div>
