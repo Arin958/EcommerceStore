@@ -47,20 +47,26 @@ useEffect(() => {
     navigate(user ? "/checkout" : "/login");
   };
 
-  const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
-    if (newQuantity < 1) return;
-    dispatch(
-      updateCart({
-        guestId,
-        productId,
-        size,
-        gender,
-        quantity: newQuantity,
-      })
-    ).then(() => {
+const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
+  if (newQuantity < 1) return;
+  dispatch(
+    updateCart({
+      guestId,
+      productId,
+      size,
+      gender,
+      quantity: newQuantity,
+    })
+  )
+    .unwrap() // Add this to properly handle the promise
+    .then(() => {
       dispatch(getCart(guestId));
+    })
+    .catch((error) => {
+      console.error("Update cart error:", error);
+      // Optionally show error to user
     });
-  };
+};
 
   const handleRemoveItem = (productId, size, gender) => {
     dispatch(
