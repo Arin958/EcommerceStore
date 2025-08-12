@@ -23,18 +23,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
   // Get guestId from localStorage if user not logged in
   const guestId = user?._id || localStorage.getItem("guestId");
 
-useEffect(() => {
-  if (isOpen) {
-    dispatch(getCart(guestId))
-      .unwrap()
-      .then((response) => {
-        console.log("Cart response:", response); // Debug production
-      })
-      .catch((error) => {
-        console.error("Get cart error:", error);
-      });
-  }
-}, [dispatch, guestId, isOpen]);
+  useEffect(() => {
+    if (isOpen) {
+      dispatch(getCart(guestId));
+    }
+  }, [dispatch, guestId]);
 
   const itemCount = products.reduce((total, item) => total + item.quantity, 0);
   const subtotal = products.reduce(
@@ -47,39 +40,33 @@ useEffect(() => {
     navigate(user ? "/checkout" : "/login");
   };
 
-const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
-  if (newQuantity < 1) return;
-  dispatch(
-    updateCart({
-      guestId,
-      productId,
-      size,
-      gender,
-      quantity: newQuantity,
-    })
-  )
-    .unwrap() // Add this to properly handle the promise
-    .then(() => {
+  const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
+    if (newQuantity < 1) return;
+    dispatch(
+      updateCart({
+        guestId,
+        productId,
+        size,
+        gender,
+        quantity: newQuantity,
+      })
+    ).then(() => {
       dispatch(getCart(guestId));
-    })
-    .catch((error) => {
-      console.error("Update cart error:", error);
-      // Optionally show error to user
     });
-};
-const handleRemoveItem = (productId, size, gender) => {
-  dispatch(
-    removeFromCart({
-      guestId,
-      productId,
-      size,
-      gender,
-    })
-  );
-  // Remove this line: .then(() => { dispatch(getCart(guestId)); });
-};
+  };
 
-// Instead, refresh cart when drawer opens or at intervals
+  const handleRemoveItem = (productId, size, gender) => {
+    dispatch(
+      removeFromCart({
+        guestId,
+        productId,
+        size,
+        gender,
+      })
+    ).then(() => {
+      dispatch(getCart(guestId)); // Refresh cart after removal
+    });
+  };
 
   return (
     <AnimatePresence>
