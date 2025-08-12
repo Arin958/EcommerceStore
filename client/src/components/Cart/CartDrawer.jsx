@@ -42,7 +42,8 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
   const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
     if (newQuantity < 1) return;
-    console.log("Updating cart with:", { guestId, productId, size, gender, newQuantity });
+
+    
 
     dispatch(
       updateCart({

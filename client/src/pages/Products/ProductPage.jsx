@@ -6,10 +6,23 @@ import ProductCard from '../../components/Product/ProductCard';
 import { Search as FiSearch } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 
+// Skeleton Loader Component
+const ProductSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="bg-gray-200 rounded-lg h-64 w-full"></div>
+    <div className="mt-3 space-y-2">
+      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+    </div>
+  </div>
+);
+
 const ProductsPage = () => {
-  const { products, filters, error } = useProductFilters();
+  const { products, filters, error, loading } = useProductFilters(); // Make sure your hook returns loading state
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState('');
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Get current search and sort values from URL
   const searchQuery = searchParams.get('search') || '';
@@ -19,6 +32,13 @@ const ProductsPage = () => {
   useEffect(() => {
     setSearchInput(searchQuery);
   }, [searchQuery]);
+
+  // Track initial load completion
+  useEffect(() => {
+    if (!loading && isInitialLoad) {
+      setIsInitialLoad(false);
+    }
+  }, [loading, isInitialLoad]);
 
   // Debounce function for live search
   const debounce = (func, delay) => {
@@ -125,9 +145,13 @@ const ProductsPage = () => {
                     ? `Search results for "${searchQuery}"` 
                     : 'All Products'}
                 </h1>
-                <p className="text-gray-600">
-                  {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
-                </p>
+                {!loading ? (
+                  <p className="text-gray-600">
+                    {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
+                  </p>
+                ) : (
+                  <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mt-1"></div>
+                )}
               </div>
               
               {/* Sort dropdown */}
@@ -137,6 +161,7 @@ const ProductsPage = () => {
                   value={sortBy}
                   onChange={(e) => handleSortChange(e.target.value)}
                   className="block p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                  disabled={loading}
                 >
                   <option value="newest">Newest Arrivals</option>
                   <option value="price-low">Price: Low to High</option>
@@ -148,14 +173,23 @@ const ProductsPage = () => {
             </div>
           </div>
           
+          {/* Products Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
+            {loading && isInitialLoad ? (
+              // Show skeleton loaders for initial load
+              Array.from({ length: 8 }).map((_, index) => (
+                <ProductSkeleton key={`skeleton-${index}`} />
+              ))
+            ) : (
+              // Show actual products when loaded
+              filteredProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))
+            )}
           </div>
 
           {/* Empty state */}
-          {filteredProducts.length === 0 && (
+          {!loading && filteredProducts.length === 0 && (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900">No products found</h3>
               <p className="mt-2 text-gray-500">
