@@ -6,9 +6,11 @@ import {
   Heart as FaHeart,
   FireExtinguisher,
   Clock,
+  ShoppingBag,
 } from "lucide-react";
 
 const ProductCard = ({ product, variant = "default" }) => {
+  
   // Determine badge based on variant
   const getBadge = () => {
     const baseClasses =
@@ -52,15 +54,13 @@ const ProductCard = ({ product, variant = "default" }) => {
         return null;
     }
   };
+  
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-500 relative group border border-gray-100 hover:border-gray-200">
       {getBadge()}
 
-      {/* Wishlist button */}
-      <button className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-md hover:bg-red-500 hover:text-white transition-colors duration-300 group-hover:opacity-100 opacity-0">
-        <FaHeart className="text-gray-600 group-hover:text-white" />
-      </button>
+ 
 
       <Link to={`/products/${product._id}`} className="block">
         {/* Image container with dynamic height and parallax effect */}

@@ -39,10 +39,7 @@ const ProductDetails = () => {
   }, [dispatch, id]);
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      toast.error("Please select a size");
-      return;
-    }
+  
 
     dispatch(
       addToCart({
