@@ -40,33 +40,38 @@ const CartDrawer = ({ isOpen, onClose }) => {
     navigate(user ? "/checkout" : "/login");
   };
 
-  const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
-    if (newQuantity < 1) return;
-    dispatch(
-      updateCart({
-        guestId,
-        productId,
-        size,
-        gender,
-        quantity: newQuantity,
-      })
-    ).then(() => {
-      dispatch(getCart(guestId));
-    });
-  };
+const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
+  if (newQuantity < 1) return;
+  dispatch(
+    updateCart({
+      guestId,
+      productId,
+      size,
+      gender,
+      quantity: newQuantity,
+    })
+  );
+  // Remove this line: .then(() => { dispatch(getCart(guestId)); });
+};
 
-  const handleRemoveItem = (productId, size, gender) => {
-    dispatch(
-      removeFromCart({
-        guestId,
-        productId,
-        size,
-        gender,
-      })
-    ).then(() => {
-      dispatch(getCart(guestId)); // Refresh cart after removal
-    });
-  };
+const handleRemoveItem = (productId, size, gender) => {
+  dispatch(
+    removeFromCart({
+      guestId,
+      productId,
+      size,
+      gender,
+    })
+  );
+  // Remove this line: .then(() => { dispatch(getCart(guestId)); });
+};
+
+// Instead, refresh cart when drawer opens or at intervals
+useEffect(() => {
+  if (isOpen) {
+    dispatch(getCart(guestId));
+  }
+}, [dispatch, guestId, isOpen]); 
 
   return (
     <AnimatePresence>
