@@ -23,11 +23,18 @@ const CartDrawer = ({ isOpen, onClose }) => {
   // Get guestId from localStorage if user not logged in
   const guestId = user?._id || localStorage.getItem("guestId");
 
-  useEffect(() => {
-    if (isOpen) {
-      dispatch(getCart(guestId));
-    }
-  }, [dispatch, guestId]);
+useEffect(() => {
+  if (isOpen) {
+    dispatch(getCart(guestId))
+      .unwrap()
+      .then((response) => {
+        console.log("Cart response:", response); // Debug production
+      })
+      .catch((error) => {
+        console.error("Get cart error:", error);
+      });
+  }
+}, [dispatch, guestId, isOpen]);
 
   const itemCount = products.reduce((total, item) => total + item.quantity, 0);
   const subtotal = products.reduce(
@@ -50,10 +57,16 @@ const handleUpdateQuantity = (productId, newQuantity, size, gender) => {
       gender,
       quantity: newQuantity,
     })
-  );
-  // Remove this line: .then(() => { dispatch(getCart(guestId)); });
+  )
+    .unwrap() // Add this to properly handle the promise
+    .then(() => {
+      dispatch(getCart(guestId));
+    })
+    .catch((error) => {
+      console.error("Update cart error:", error);
+      // Optionally show error to user
+    });
 };
-
 const handleRemoveItem = (productId, size, gender) => {
   dispatch(
     removeFromCart({
@@ -67,11 +80,6 @@ const handleRemoveItem = (productId, size, gender) => {
 };
 
 // Instead, refresh cart when drawer opens or at intervals
-useEffect(() => {
-  if (isOpen) {
-    dispatch(getCart(guestId));
-  }
-}, [dispatch, guestId, isOpen]); 
 
   return (
     <AnimatePresence>
