@@ -125,13 +125,15 @@ exports.getCart = async (req, res) => {
 
 exports.updateCartItems = async (req, res) => {
   try {
-    const { productId, size, gender, quantity, guestId } = req.body;
+    let { productId, size, gender, quantity, guestId } = req.body;
     const userId = getUserIdFromToken(req);
 
+    // Normalize
+    size = size ? size.toLowerCase() : "";
+    gender = gender ? gender.toLowerCase() : "";
+
     if (!quantity || quantity <= 0) {
-      return res
-        .status(400)
-        .json({ message: "Quantity must be greater than 0", success: false });
+      return res.status(400).json({ message: "Quantity must be greater than 0", success: false });
     }
 
     let cart;
@@ -142,67 +144,58 @@ exports.updateCartItems = async (req, res) => {
     }
 
     if (!cart) {
-      return res.status(404).json({
-        success: false,
-        message: "Cart not found",
-      });
+      return res.status(404).json({ success: false, message: "Cart not found" });
     }
 
     const product = await Product.findById(productId);
-
     if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
+      return res.status(404).json({ success: false, message: "Product not found" });
     }
 
     if (product.stock < quantity) {
-      return res.status(400).json({
-        success: false,
-        message: "Out of stock",
-      });
+      return res.status(400).json({ success: false, message: "Out of stock" });
     }
 
-    const itemIndex = cart.products.findIndex(
-      (item) =>
+    const itemIndex = cart.products.findIndex((item) => {
+      const itemSize = (item.size || "").toLowerCase();
+      const itemGender = (item.gender || "").toLowerCase();
+      return (
         item.productId.toString() === productId &&
-        item.size === size &&
-        item.gender === gender
-    );
+        itemSize === size &&
+        itemGender === gender
+      );
+    });
 
     if (itemIndex === -1) {
-      return res.status(404).json({
-        success: false,
-        message: "Item not found",
-      });
+      return res.status(404).json({ success: false, message: "Item not found" });
     }
 
     cart.products[itemIndex].quantity = quantity;
+
     cart.totalPrice = Math.round(
-      cart.products.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      )
+      cart.products.reduce((total, item) => total + item.price * item.quantity, 0)
     );
 
     await cart.save();
+
     res.status(200).json({ success: true, cart });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ message: "Internal server error", success: false });
+    return res.status(500).json({ message: "Internal server error", success: false });
   }
 };
 
+
 exports.removeFromCart = async (req, res) => {
   try {
-    const { productId, size, gender, guestId } = req.body;
+    let { productId, size, gender, guestId } = req.body;
     const userId = getUserIdFromToken(req);
 
-    let cart;
+    // Normalize
+    size = size ? size.toLowerCase() : "";
+    gender = gender ? gender.toLowerCase() : "";
 
+    let cart;
     if (userId) {
       cart = await Cart.findOne({ user: userId });
     } else if (guestId) {
@@ -210,40 +203,43 @@ exports.removeFromCart = async (req, res) => {
     }
 
     if (!cart) {
-      return res.status(404).json({
-        success: false,
-        message: "Cart not found",
-      });
+      return res.status(404).json({ success: false, message: "Cart not found" });
     }
 
     const initialLength = cart.products.length;
 
     cart.products = cart.products.filter((item) => {
+      const itemSize = (item.size || "").toLowerCase();
+      const itemGender = (item.gender || "").toLowerCase();
       return (
         item.productId.toString() !== productId ||
-        item.size !== size ||
-        item.gender !== gender
+        itemSize !== size ||
+        itemGender !== gender
       );
     });
 
     cart.totalPrice = Math.round(
-      cart.products.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      )
+      cart.products.reduce((total, item) => total + item.price * item.quantity, 0)
     );
 
-    await cart.deleteOne();
+    if (cart.products.length === 0) {
+      // Delete only if empty
+      await cart.deleteOne();
+    } else {
+      await cart.save();
+    }
 
     return res.status(200).json({
       success: true,
-      message: `${
-        initialLength - cart.products.length
-      } item(s) removed from cart`,
-      cart,
+      message: `${initialLength - cart.products.length} item(s) removed from cart`,
+      cart: cart.products.length > 0 ? cart : { products: [], totalPrice: 0 },
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error", success: false });
+  }
 };
+
 
 exports.mergeCarts = async (req, res) => {
   try {
