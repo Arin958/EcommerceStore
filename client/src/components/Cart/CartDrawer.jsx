@@ -23,11 +23,18 @@ const CartDrawer = ({ isOpen, onClose }) => {
   // Get guestId from localStorage if user not logged in
   const guestId = user?._id || localStorage.getItem("guestId");
 
-  useEffect(() => {
-    if (isOpen) {
-      dispatch(getCart(guestId));
-    }
-  }, [dispatch, guestId]);
+useEffect(() => {
+  if (isOpen) {
+    dispatch(getCart(guestId))
+      .unwrap()
+      .then((response) => {
+        console.log("Cart response:", response); // Debug production
+      })
+      .catch((error) => {
+        console.error("Get cart error:", error);
+      });
+  }
+}, [dispatch, guestId, isOpen]);
 
   const itemCount = products.reduce((total, item) => total + item.quantity, 0);
   const subtotal = products.reduce(
