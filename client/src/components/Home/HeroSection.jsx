@@ -12,8 +12,9 @@ const SLIDES = [
     cta: "Shop Now",
     overlay: "bg-gradient-to-r from-indigo-900/70 to-purple-900/70",
     textColor: "text-white",
-    buttonPrimary: "bg-white text-indigo-600 hover:bg-gray-100",
-    buttonSecondary: "border-white text-white hover:bg-white/10"
+    tagColor: "bg-white/20 text-white",
+    buttonPrimary: "bg-white text-indigo-800 hover:bg-gray-100 font-semibold",
+    buttonSecondary: "border-2 border-white text-white hover:bg-white/10 font-semibold"
   },
   {
     image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
@@ -22,8 +23,9 @@ const SLIDES = [
     cta: "Explore",
     overlay: "bg-gradient-to-r from-indigo-600/70 to-purple-600/70",
     textColor: "text-white",
-    buttonPrimary: "bg-white text-indigo-600 hover:bg-gray-100",
-    buttonSecondary: "border-white text-white hover:bg-white/10"
+    tagColor: "bg-white/20 text-white",
+    buttonPrimary: "bg-white text-indigo-800 hover:bg-gray-100 font-semibold",
+    buttonSecondary: "border-2 border-white text-white hover:bg-white/10 font-semibold"
   },
   {
     image: "https://images.unsplash.com/photo-1556909212-d5b604d0c90d",
@@ -32,8 +34,9 @@ const SLIDES = [
     cta: "View Collection",
     overlay: "bg-gradient-to-r from-indigo-800/70 to-purple-800/70",
     textColor: "text-white",
-    buttonPrimary: "bg-white text-indigo-600 hover:bg-gray-100",
-    buttonSecondary: "border-white text-white hover:bg-white/10"
+    tagColor: "bg-white/20 text-white",
+    buttonPrimary: "bg-white text-indigo-800 hover:bg-gray-100 font-semibold",
+    buttonSecondary: "border-2 border-white text-white hover:bg-white/10 font-semibold"
   },
 ];
 
@@ -82,20 +85,20 @@ const HeroSection = () => {
       {/* Content */}
       <div className={`relative z-10 h-full flex items-center px-6 sm:px-12 lg:px-24 ${currentSlideData.textColor}`}>
         <div className="max-w-2xl space-y-6">
-          <span className="inline-block px-4 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
+          <span className={`inline-block px-4 py-1 rounded-full text-sm font-medium backdrop-blur-sm ${currentSlideData.tagColor}`}>
             Limited Time Offer
           </span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight drop-shadow-md">
             {currentSlideData.title}
           </h1>
-          <p className="text-xl sm:text-2xl opacity-90">
+          <p className="text-xl sm:text-2xl opacity-95 drop-shadow-sm">
             {currentSlideData.subtitle}
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
-            <button className={`px-8 py-3 font-bold rounded-full transition-all transform hover:scale-105 shadow-lg ${currentSlideData.buttonPrimary}`}>
+            <button className={`px-8 py-3 rounded-full transition-all transform hover:scale-105 shadow-lg ${currentSlideData.buttonPrimary}`}>
               {currentSlideData.cta}
             </button>
-            <button className={`px-8 py-3 border-2 font-bold rounded-full transition-all transform hover:scale-105 ${currentSlideData.buttonSecondary}`}>
+            <button className={`px-8 py-3 rounded-full transition-all transform hover:scale-105 ${currentSlideData.buttonSecondary}`}>
               Learn More
             </button>
           </div>
@@ -105,14 +108,14 @@ const HeroSection = () => {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 z-20 p-3 bg-white/30 backdrop-blur-sm rounded-full hover:bg-white/50 transition-all"
+        className="absolute left-4 top-1/2 z-20 p-3 bg-white/30 backdrop-blur-sm rounded-full hover:bg-white/50 transition-all transform hover:scale-110"
         aria-label="Previous slide"
       >
         <FiChevronLeft size={24} className="text-white" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 z-20 p-3 bg-white/30 backdrop-blur-sm rounded-full hover:bg-white/50 transition-all"
+        className="absolute right-4 top-1/2 z-20 p-3 bg-white/30 backdrop-blur-sm rounded-full hover:bg-white/50 transition-all transform hover:scale-110"
         aria-label="Next slide"
       >
         <FiChevronRight size={24} className="text-white" />
