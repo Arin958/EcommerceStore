@@ -124,6 +124,7 @@ exports.getCart = async (req, res) => {
 };
 
 exports.updateCartItems = async (req, res) => {
+  console.log("Updating cart items", req.body);
   try {
     let { productId, size, gender, quantity, guestId } = req.body;
     const userId = getUserIdFromToken(req);
