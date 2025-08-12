@@ -4,6 +4,7 @@ const Product = require("../../model/products/Product");
 
 const getFilteredProducts = async (req, res) => {
   try {
+    // Accept singular or plural for brand and others for flexibility
     const {
       category,
       gender,
@@ -11,8 +12,8 @@ const getFilteredProducts = async (req, res) => {
       maxPrice,
       colors,
       sizes,
-      brands,
-      collections,
+      brand,   // singular, from frontend query param
+      collection,
       sortBy,
       search,
       isFeatured,
@@ -21,10 +22,17 @@ const getFilteredProducts = async (req, res) => {
       limit,
     } = req.query;
 
+    // For multi-value filters, normalize into arrays:
+    const brands = brand ? (Array.isArray(brand) ? brand : [brand]) : undefined;
+    const categories = category ? (Array.isArray(category) ? category : [category]) : undefined;
+    const genders = gender ? (Array.isArray(gender) ? gender : [gender]) : undefined;
+    const colorsArr = colors ? (Array.isArray(colors) ? colors : [colors]) : undefined;
+    const sizesArr = sizes ? (Array.isArray(sizes) ? sizes : [sizes]) : undefined;
+    const collectionsArr = collection ? (Array.isArray(collection) ? collection : [collection]) : undefined;
+
     // Base query
     let query = { isActive: true };
 
-    // Text search
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -33,61 +41,30 @@ const getFilteredProducts = async (req, res) => {
       ];
     }
 
-    // Category filter
-    if (category) {
-      query.category = { $in: Array.isArray(category) ? category : [category] };
-    }
+    if (categories) query.category = { $in: categories };
+    if (genders) query.gender = { $in: genders };
 
-    // Gender filter
-    if (gender) {
-      query.gender = { $in: Array.isArray(gender) ? gender : [gender] };
-    }
-
-    // Price range filter
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    // Color filter
-    if (colors) {
-      query.colors = { $in: Array.isArray(colors) ? colors : [colors] };
-    }
+    if (colorsArr) query.colors = { $in: colorsArr };
+    if (sizesArr) query.sizes = { $in: sizesArr };
+    if (brands) query.brand = { $in: brands };
+    if (collectionsArr) query.collections = { $in: collectionsArr };
 
-    // Size filter
-    if (sizes) {
-      query.sizes = { $in: Array.isArray(sizes) ? sizes : [sizes] };
-    }
+    if (isFeatured === "true") query.isFeatured = true;
 
-    // Brand filter
-    if (brands) {
-      query.brand = { $in: Array.isArray(brands) ? brands : [brands] };
-    }
-
-    // Collection filter
-    if (collections) {
-      query.collections = { $in: Array.isArray(collections) ? collections : [collections] };
-    }
-
-    // Featured products
-    if (isFeatured === "true") {
-      query.isFeatured = true;
-    }
-
-    // New arrivals (last 30 days)
     if (newArrivals === "true") {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       query.createdAt = { $gte: thirtyDaysAgo };
     }
 
-    // Best sellers (top sold products)
-    if (bestSellers === "true") {
-      query.sold = { $gt: 0 };
-    }
+    if (bestSellers === "true") query.sold = { $gt: 0 };
 
-    // Sorting
     let sortOption = {};
     switch (sortBy) {
       case "price-low":
@@ -109,17 +86,12 @@ const getFilteredProducts = async (req, res) => {
         sortOption = { createdAt: -1 };
     }
 
-    // Execute query
     let productsQuery = Product.find(query).sort(sortOption);
 
-    // Limit results
-    if (limit) {
-      productsQuery = productsQuery.limit(Number(limit));
-    }
+    if (limit) productsQuery = productsQuery.limit(Number(limit));
 
     const products = await productsQuery.exec();
 
-    // Get available filter options for the current results
     const filters = {
       categories: await Product.distinct("category", query),
       genders: await Product.distinct("gender", query),
@@ -153,5 +125,6 @@ const getFilteredProducts = async (req, res) => {
     });
   }
 };
+
 
 module.exports = { getFilteredProducts };

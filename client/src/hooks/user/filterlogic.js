@@ -21,6 +21,36 @@ const useFilterLogic = () => {
     maxPrice: "",
   });
 
+  // Helper: parse URL params into proper arrays/values
+  const parseFiltersFromParams = (params) => {
+    const parsed = {};
+
+    // Get all unique keys from searchParams
+    const keys = Array.from(new Set(Array.from(params.keys())));
+
+    keys.forEach((key) => {
+      const values = params.getAll(key);
+      // If more than one value, store as array; else store as string
+      parsed[key] = values.length > 1 ? values : values[0];
+    });
+
+    return parsed;
+  };
+
+
+
+  // Initialize from URL on mount or URL change
+  useEffect(() => {
+    const parsed = parseFiltersFromParams(searchParams);
+    setActiveFilters(parsed);
+
+    // Sync search input
+    setSearchInput(searchParams.get("search") || "");
+  }, [searchParams]);
+
+  
+
+  // Sync price inputs with filters
   useEffect(() => {
     setPriceInputs({
       minPrice: activeFilters.minPrice || "",
@@ -28,23 +58,16 @@ const useFilterLogic = () => {
     });
   }, [activeFilters.minPrice, activeFilters.maxPrice]);
 
-  // Initialize active filters from URL
-  useEffect(() => {
-    const params = Object.fromEntries(searchParams.entries());
-    setActiveFilters(params);
-    setSearchInput(params.search || "");
-  }, [searchParams]);
-
+  // Debounce utility
   const debounce = (func, delay) => {
     let timer;
     return function (...args) {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        func.apply(this, args);
-      }, delay);
+      timer = setTimeout(() => func.apply(this, args), delay);
     };
   };
 
+  // Debounced handlers
   const debounceHandlePriceChange = useCallback(
     debounce((key, value) => {
       const newParams = new URLSearchParams(searchParams);
@@ -56,39 +79,40 @@ const useFilterLogic = () => {
       }
 
       setSearchParams(newParams);
-    }, 500)
+    }, 500),
+    [searchParams]
   );
 
   const debounceHandleSearch = useCallback(
     debounce((searchValue) => {
       handleFilterChange("search", searchValue);
-    })
+    }, 500),
+    [searchParams]
   );
 
+  // Handle setting filter values (array or single)
   const handleFilterChange = (key, value) => {
-    if (key === "minPrice" || key === "maxPrice") {
-      debounceHandlePriceChange(key, value);
+    const newParams = new URLSearchParams(searchParams);
+
+    if (value === "" || value === false || (Array.isArray(value) && value.length === 0)) {
+      newParams.delete(key);
+    } else if (Array.isArray(value)) {
+      newParams.delete(key);
+      value.forEach((v) => newParams.append(key, v));
     } else {
-      const newParams = new URLSearchParams(searchParams);
-
-      if (value === "" || value === false) {
-        newParams.delete(key);
-      } else if (Array.isArray(value)) {
-        newParams.delete(key);
-        value.forEach((v) => newParams.append(key, v));
-      } else {
-        newParams.set(key, value);
-      }
-
-      setSearchParams(newParams);
+      newParams.set(key, value);
     }
+
+    setSearchParams(newParams);
   };
 
+  // Search input change
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
     debounceHandleSearch(e.target.value);
   };
 
+  // Toggle array filter value
   const toggleArrayFilter = (key, item) => {
     const current = activeFilters[key]
       ? Array.isArray(activeFilters[key])
@@ -103,6 +127,7 @@ const useFilterLogic = () => {
     handleFilterChange(key, newValue);
   };
 
+  // Check if a filter is active
   const isFilterActive = (key, value) => {
     if (!activeFilters[key]) return false;
     return Array.isArray(activeFilters[key])
@@ -110,6 +135,7 @@ const useFilterLogic = () => {
       : activeFilters[key] === value;
   };
 
+  // Toggle collapse for sections
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -117,8 +143,12 @@ const useFilterLogic = () => {
     }));
   };
 
+  // Count active filters excluding "sort" or defaults
   const activeFilterCount = Object.keys(activeFilters).filter(
-    (key) => activeFilters[key] && activeFilters[key] !== "newest"
+    (key) =>
+      activeFilters[key] &&
+      activeFilters[key] !== "newest" &&
+      !(Array.isArray(activeFilters[key]) && activeFilters[key].length === 0)
   ).length;
 
   return {
@@ -135,7 +165,7 @@ const useFilterLogic = () => {
     setSearchParams,
     handleFilterChange,
     toggleArrayFilter,
-    isFilterActive
+    isFilterActive,
   };
 };
 
